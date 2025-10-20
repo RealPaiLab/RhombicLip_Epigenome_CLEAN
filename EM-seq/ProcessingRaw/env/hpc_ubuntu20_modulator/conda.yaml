@@ -1,0 +1,36 @@
+- name: conda
+  version: 4.11.0
+  permitted_os: ["Ubuntu20.04"]
+  build_type: custom
+  build_args:
+    prereq_args:
+      sha256: 4ee9c3aa53329cd7a63b49877c0babb49b19b7e5af29807b793a76bdb1d362b4
+      url: https://repo.anaconda.com/miniconda/Miniconda3-py39_4.11.0-Linux-x86_64.sh
+    prereq_type: download
+    steps:
+      - command:
+        - /bin/bash
+        - download
+        - -b
+        - -p
+        - "{output_dir}"
+        - -f
+- name: conda
+  version: 24.1.2
+  permitted_os: ["Ubuntu20.04"]
+  build_type: custom
+  build_args:
+    prereq_args:
+      sha256: 8eb5999c2f7ac6189690d95ae5ec911032fa6697ae4b34eb3235802086566d78
+      url: https://repo.anaconda.com/miniconda/Miniconda3-py310_24.1.2-0-Linux-x86_64.sh
+      to: Miniconda3-py310_24.1.2-0-Linux-x86_64.sh
+    prereq_type: download
+    steps:
+      - command:
+        - /bin/bash
+        - Miniconda3-py310_24.1.2-0-Linux-x86_64.sh
+        - -b
+        - -p
+        - "{output_dir}"
+        - -f
+

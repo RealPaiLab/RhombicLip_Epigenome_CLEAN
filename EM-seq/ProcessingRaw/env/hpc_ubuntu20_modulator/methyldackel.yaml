@@ -1,0 +1,25 @@
+- name: methyldackel
+  version: 0.6.1
+  build_type: custom
+  build_args:
+    steps:
+      - build_type: conda
+        build_args:
+          package: htslib
+          version: 1.16
+          channels:
+            - bioconda
+            - anaconda
+            - conda-forge
+      - build_type: conda
+        build_args:
+          package: libbigwig
+          version: 0.4.7
+      - build_type: conda
+        build_args:
+          package: methyldackel
+          version: 0.6.1
+  depends:
+    - name: conda
+      version: 24.1.2
+      required_at: build

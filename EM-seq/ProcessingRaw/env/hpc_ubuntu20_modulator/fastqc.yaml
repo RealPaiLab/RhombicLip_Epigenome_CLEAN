@@ -1,0 +1,33 @@
+- name: fastqc
+  version: 0.11.9
+  build_type: custom
+  build_args:
+    prereq_args:
+      prereq_args:
+        sha256: 15510a176ef798e40325b717cac556509fb218268cfdb9a35ea6776498321369
+        url: https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip
+      prereq_type: download
+    prereq_type: extract
+    steps:
+      - command:
+        - rsync
+        - -av
+        - FastQC/
+        - "{output_dir}"
+      - command:
+        - chmod
+        - +x
+        - "{output_dir}/fastqc"
+      - command:
+        - mkdir
+        - "{output_dir}/bin/"
+      - command:
+        - ln
+        - -sf
+        - "{output_dir}/fastqc"
+        - "{output_dir}/bin/"
+  depends:
+    - name: java
+      version: 11
+      required_at: soft_runtime
+

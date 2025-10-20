@@ -1,0 +1,27 @@
+- name: picard
+  version: 2.27.5
+  build_type: copy
+  build_args:
+    prereq_args:
+      md5: c98273cfdd468eb10777584343da880b
+      url: https://github.com/broadinstitute/picard/releases/download/2.27.5/picard.jar
+    prereq_type: download
+    to: 'picard.jar'
+  depends:
+    - name: java
+      version: 8
+- name: picard-tools
+  version: 1.89
+  build_type: copy
+  build_args:
+    prereq_args:
+      prereq_args:
+        sha256: 331d5a9207941523885d23f519968201ce1eb0075aa16fb81b20bd7d47e6d9d5
+        url: https://master.dl.sourceforge.net/project/picard/picard-tools/1.89/picard-tools-1.89.zip
+      prereq_type: download
+    prereq_type: extract
+    from: 'picard-tools-1.89'
+  depends:
+    - name: java
+      version: 8
+

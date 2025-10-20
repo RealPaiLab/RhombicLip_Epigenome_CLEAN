@@ -1,0 +1,10 @@
+directory:
+  input: "/.mounts/labs/pailab/private/projects/FetalHindbrain/EMseq_FETHB3/input"
+  output: "/.mounts/labs/pailab/private/projects/FetalHindbrain/EMseq_FETHB3/output"
+boundaries:
+  OT: 0,0,0,147
+  OB: 3,0,5,0
+const:
+  genome: "/.mounts/labs/pailab/src/aligner_indexes/hg38/bwameth/genome_lambda_puc19.fa"
+  reg_elmts: "/.mounts/labs/pailab/src/ICR/hg38/known_ICR_all2.bed"
+  human_ccres: "/.mounts/labs/pailab/src/encode/cCRE/hg38/GRCh38-cCREs.bed"

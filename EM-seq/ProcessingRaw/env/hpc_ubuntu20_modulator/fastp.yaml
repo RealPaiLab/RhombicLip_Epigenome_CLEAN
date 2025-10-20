@@ -1,0 +1,10 @@
+- name: fastp
+  version:  0.23.2
+  build_type: copy
+  build_args:
+    prereq_type: download
+    prereq_args:
+      sha256: 5ebe87e5cf4f73d4c4eb0ea376b143b3987ca04e20ace896ed2243219f58dfca
+      url: http://opengene.org/fastp/fastp.0.23.2
+    to: bin/fastp
+

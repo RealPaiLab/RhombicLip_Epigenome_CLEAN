@@ -1,0 +1,1 @@
+NOTE: to change the CpG dmr from a specific date, for downstream analyses, you need to change the CPG_DMR_FILE in the get_configs function in ../../utils.R. This function also includes all fixed config params, to maintain consistant change of params across scripts. 

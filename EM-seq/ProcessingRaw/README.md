@@ -1,0 +1,1 @@
+To run EM-seq snakemake pipeline, under workflow folder `bash run.sh xsun ../batchConfigs/EMseq_FETHB3_20240311.yaml`, where xsun is my oicr email username, and the last param is the snakemake yaml file. To build your own yaml file for snakemake, refer to  ProcessingRaw/config or ProcessingRaw/batchConfigs

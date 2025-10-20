@@ -1,0 +1,14 @@
+- name: snakemake
+  version: 6.4.0
+  build_type: conda
+  build_args:
+    package: snakemake
+    version: 6.4.0
+    channels:
+      - bioconda
+      - conda-forge
+  depends:
+    - name: conda
+      version: 24.1.2
+      required_at: build
+
