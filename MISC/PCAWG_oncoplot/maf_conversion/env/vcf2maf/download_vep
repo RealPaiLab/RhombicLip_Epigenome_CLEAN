@@ -1,5 +1,0 @@
-DIR=/.mounts/labs/pailab/private/xsun/Database
-mkdir -p $DIR/.vep/homo_sapiens/112_GRCh38/
-rsync -avr --progress rsync://ftp.ensembl.org/ensembl/pub/release-112/variation/indexed_vep_cache/homo_sapiens_vep_112_GRCh38.tar.gz $DIR/.vep/
-tar -zxf $DIR/.vep/homo_sapiens_vep_112_GRCh38.tar.gz -C $DIR/.vep/
-rsync -avr --progress rsync://ftp.ensembl.org/ensembl/pub/release-112/fasta/homo_sapiens/dna_index/ $DIR/.vep/homo_sapiens/112_GRCh38/

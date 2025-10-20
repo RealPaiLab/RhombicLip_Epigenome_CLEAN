@@ -1,2 +1,0 @@
-- idmapping_2024_04_17.tsv
-I combined all active genes from the output folder and uploaded to UniProt to map gene names to their protein IDs (https://www.uniprot.org/id-mapping). From database was "UniProt/Gene Name" and To database was "UniProtKB/Swiss-Prot". 

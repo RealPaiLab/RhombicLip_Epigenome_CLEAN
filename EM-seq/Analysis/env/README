@@ -1,8 +1,0 @@
-# the Docker_EM-seq_downstream folder contains recipe for building xinghansun/emseq-downstream:v1 image
-# now using v4
-
-# to create the docker container, do as below:
-docker run -d --name xsun_emseq -p 8080:8787 -v /u/xsun/:/u/xsun/ -v /data/xsun:/data/xsun -v /.mounts/labs/pailab/private/xsun/:/.mounts/labs/pailab/private/xsun/ -v /.mounts/labs/pailab/private/projects/FetalHindbrain/:/.mounts/labs/pailab/private/projects/FetalHindbrain/ -v /.mounts/labs/pailab/private/projects/MB_scDNAme/:/.mounts/labs/pailab/private/projects/MB_scDNAme/ -v /.mounts/labs/pailab/src:/.mounts/labs/pailab/src -e PASSWORD=test  xinghansun/emseq-downstream:v4
-
-# to connect to the rstudio server:
-ssh -fNL 2345:localhost:8080 xsun@pailab.hpc.oicr.on.ca
