@@ -1,8 +1,8 @@
 This repo contains analysis to reproduce the results and figures from the following preprint:
 
 **Epigenomic landscape of the developing human rhombic lip reveals gene regulatory network and non-coding loci of developmental, evolutionary, and disease relevance**
-Sun X., Menon S., Wambo P., Lungu I., Birth Defects Research Laboratory, Aldinger K.A., and S. Pai
-[https://www.biorxiv.org/content/10.1101/2025.10.30.685586v1](bioRXiv preprint)
+Sun X., Menon S., Wambo P., Lungu I., Birth Defects Research Laboratory, Aldinger K.A., and S. Pai.
+[bioRXiv preprint](https://www.biorxiv.org/content/10.1101/2025.10.30.685586v1)
 
 * EM-seq preprocessing: `ProcessingRaw/` folder
 * Exploratory data analysis: `EDA/` folder
