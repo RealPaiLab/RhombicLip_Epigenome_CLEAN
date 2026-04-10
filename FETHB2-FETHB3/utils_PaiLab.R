@@ -391,7 +391,7 @@ get_fetalcb_cres <- function() {
 #' get neurodevelopment genes
 #' @param path (charaters) The path to the file containing the gene list
 #' @return (character) A vector of neurodevelopment genes
-get_neurodevGenes <- function() {
+get_neurodevGenes <- function(verbose=TRUE) {
   additional_genes = c("OLIG3") # mentioned by Kim Aldinger
   
   paths <- c(avc = glue("/home/rstudio/isilon/src/gene_list/brain-development",
@@ -438,11 +438,13 @@ get_neurodevGenes <- function() {
   res <- unique(c(avc_genes, leto_genes, bhaduri_genes, sepp_genes, ianLeo_genes,
                   additional_genes)
                 )
-  message(sprintf("Obtained %i neuro development genes from %s", 
-                  length(res),
-                  paste(c("", paths), collapse = "\n- ")
-  )
-  )
+  if (verbose) {
+    message(sprintf("Obtained %i neuro development genes from %s", 
+                    length(res),
+                    paste(c("", paths), collapse = "\n- ")
+    )
+    )
+  }
   
   return(res)
 }
@@ -451,7 +453,8 @@ get_neurodevGenes <- function() {
 #' @param db (character) The directory to MB_gene list
 #' @return (character) A vector of Grp3/4 MB genes
 get_g34genes <- function(db = glue("/home/rstudio/isilon/src/gene_list/MB_gene",
-                                   "/MBgene_database_20240709171001.csv")
+                                   "/MBgene_database_20240709171001.csv"),
+                                   verbose = TRUE                            
                          ) {
   df <- read.csv(db, stringsAsFactors = F, header = T, row.names = 1)
   sub <- df[,grepl("Hendrikse2022_G3_G4_MB_genes|Northcott2017_G34_genes", 
@@ -461,6 +464,12 @@ get_g34genes <- function(db = glue("/home/rstudio/isilon/src/gene_list/MB_gene",
 
   g34_genes <- unique(rownames(sub[rowSums(sub) != 0,]))
   
+  if (verbose) {
+    message(sprintf("Obtained %i G3/4 MB genes from %s", 
+                    length(g34_genes),
+                    db
+    ))
+  }
   return(g34_genes)
 }
 

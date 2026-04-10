@@ -5,8 +5,8 @@
 #' @return (GRanges) Converted intervals. 
 cmd_liftOver <- function(
     x, 
-    chain = "/.mounts/labs/pailab/src/ucsc-tools/chain_files/hg19ToHg38.over.chain",
-    liftOver_bin = "/.mounts/labs/pailab/private/xsun/Software/liftOver"
+    chain = "/home/rstudio/isilon/src/ucsc-tools/chain_files/hg19ToHg38.over.chain",
+    liftOver_bin = "/home/rstudio/isilon/private/xsun/Software/liftOver"
     ) {
   message(sprintf("Preparing to liftOver %d intervals.", length(x)))
   x_bed <- tempfile(fileext = ".bed")
@@ -100,8 +100,8 @@ getHARs <- function() {
     library(GenomicRanges)
     library(BSgenome.Hsapiens.UCSC.hg38)
 
-    HAR_hg19 <- "/.mounts/labs/pailab/src/evolution/PollardLab_HARs/nchaes_merged_hg19.bed"
-    hg19_to_hg38 <- "/.mounts/labs/pailab/src/ucsc-tools/chain_files/hg19ToHg38.over.chain"
+    HAR_hg19 <- "/home/rstudio/isilon/src/evolution/PollardLab_HARs/nchaes_merged_hg19.bed"
+    hg19_to_hg38 <- "/home/rstudio/isilon/src/ucsc-tools/chain_files/hg19ToHg38.over.chain"
 
     message("reading HAR")
         har <- read.delim(HAR_hg19,sep="\t",h=F,as.is=T)
@@ -120,7 +120,7 @@ getHARs <- function() {
 #' liftOver from hg19 to hg38
 getNorthcott2017_AmpsDels <- function() {
   require(readxl)
-  dir <- "/.mounts/labs/pailab/src/MB_genomics/WGS/Northcott2017/41586_2017_BFnature22973_MOESM2_ESM.xlsx"
+  dir <- "/home/rstudio/isilon/src/MB_genomics/WGS/Northcott2017/41586_2017_BFnature22973_MOESM2_ESM.xlsx"
   
   sheetNames <- apply(expand.grid(c("GRP3", "GRP4", "SHH"), "GISTIC", c("AMP", "DEL")), 
         1, 
@@ -175,8 +175,8 @@ getNorthcott2012_AmpsDels <- function(field = "peak", verbose=FALSE){
 
     hg38 <- BSgenome.Hsapiens.UCSC.hg38
 
-    n2012Dir <- "/.mounts/labs/pailab/src/MB_genomics/SNParrays/Northcott_2012/Northcott2012_supp/nature11327-s2"
-    hg18_to_hg38 <- "/.mounts/labs/pailab/src/ucsc-tools/chain_files/hg18ToHg38.over.chain"
+    n2012Dir <- "/home/rstudio/isilon/src/MB_genomics/SNParrays/Northcott_2012/Northcott2012_supp/nature11327-s2"
+    hg18_to_hg38 <- "/home/rstudio/isilon/src/ucsc-tools/chain_files/hg18ToHg38.over.chain"
 
     ampFile <- sprintf("%s/2012-01-00811C-SupplementaryTable-4-GISTIC_Amps.xlsx",
         n2012Dir)
@@ -283,7 +283,7 @@ getNorthcott2012_AmpsDels <- function(field = "peak", verbose=FALSE){
 
 
 getPhastCons <- function(){
-    annoRoot <- "/.mounts/labs/pailab/private/projects/FetalHindbrain/anno/"
+    annoRoot <- "/home/rstudio/isilon/private/projects/FetalHindbrain/anno/"
     # processed in this code
     pconsFile <- sprintf("%s/phastConsElements470way.StandardChroms.withGCandLen.bed", annoRoot)
 
@@ -309,7 +309,7 @@ getPhastCons <- function(){
 
 #' get nearest gene to all ranges in gr
 getNearestGene <- function(gr, gene_types = NULL){
-    geneFile <- "/.mounts/labs/pailab/private/projects/FetalHindbrain/anno/gencode.v42.basic.annotation.gtf"
+    geneFile <- "/home/rstudio/isilon/private/projects/FetalHindbrain/anno/gencode.v42.basic.annotation.gtf"
     genes <- rtracklayer::readGFF(geneFile)
     genes <- subset(genes, type == "gene")
     if (! is.null(gene_types)) {
@@ -332,7 +332,7 @@ getNearestGene <- function(gr, gene_types = NULL){
 
 #' get fetal cerebellum histone peaks as GRanges
 getFetalCB_HistonePeaks <- function() {
-    pDir <- "/.mounts/labs/pailab/private/xsun/output/ncMutMB/20240314/cre/Aldinger-FetalCB/raw"
+    pDir <- "/home/rstudio/isilon/private/xsun/output/ncMutMB/20240314/cre/Aldinger-FetalCB/raw"
 
     ac1 <- import.bed(sprintf("%s/1_27907-102M_H3K27Ac_hg38.bed",pDir))
     ac2 <- import.bed(sprintf("%s/2_27556-132M_H3K27Ac_hg38.bed",pDir))

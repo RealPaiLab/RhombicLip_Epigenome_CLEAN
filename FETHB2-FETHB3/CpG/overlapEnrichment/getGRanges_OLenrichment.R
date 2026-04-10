@@ -3,8 +3,6 @@ library(ggpubr) #ggarrange
 library(rtracklayer)
 library(doParallel)
 
-setwd(this.path::this.dir()) # set current scripts' dir as working dir
-
 #' get DMR overlap enrichment relative to length- and GC-matched reanges
 #' @param pos (GRanges) query GRanges e.g., DMRs
 #' @param tgtGR (GRanges) target GRanges e.g., HARs, enhancers, etc.,
@@ -26,12 +24,13 @@ getGRanges_OLenrichment <- function(pos,tgtGR,numPerm,negDir=NULL,
     set.seed(rngSeed) 
 
     direction <- match.arg(direction)
-    message(glue("Testing for {direction}."))
+    cat(sprintf("Testing for %s overlap enrichment, direction=%s\n", tgtName, direction))
 
     if (is.null(negDir)) stop("provide negDir")
     if (!file.exists(negDir)){
         cat(sprintf("Getting null sequences for %i permutations\n", numPerm))
         t0 <- Sys.time()
+        ###tryCatch({
         dir.create(negDir)
         negs <- getNullGRanges(
             pos=pos, 
@@ -39,6 +38,13 @@ getGRanges_OLenrichment <- function(pos,tgtGR,numPerm,negDir=NULL,
             numSets=numPerm,
             outDir=negDir
         )
+        ###}, error=function(ex){
+        ###    print(ex)
+        ###    cat("removing negDir\n")
+        ###    file.remove(negDir)
+        ###}, finally= {
+        ###    cat("Done generating null seqs.\n")
+        ###})
         print(Sys.time()-t0)
     } else {
         if (verbose) cat(sprintf("neg ranges provided, just going to use those...\n"))
@@ -102,8 +108,9 @@ plotGRanges_OLenrichment <- function(pos, tgtGR, tgtName, negDir,numCores=10L,ve
   
   nullol <- foreach (k=seq(1,length(negs),10),.packages=c("rtracklayer")) %dopar% {  
     cur <- c()
-    for (m in k:(k+9)){
-      #print(k)
+    maxK <- min(k+9, length(negs))
+    for (m in k:maxK){
+     # print(m)
       neg <- import(negs[m])
       #if (length(negs) <=10) plist[[k]] <- compareGR(pos,neg)
       cur <- c(cur, getOverlap(neg, tgtGR))
@@ -339,8 +346,6 @@ plotViolins_OLenrichment <- function(pos, tgtList, negDir, levels = NULL) {
   ##p <- p + ylab("% overlap")
   #p <- p + annotate(geom="text", x=1:nrow(pos), y=maxval, 
    # label=sprintf("p < %1.2f", pos$pval))
- 
-
   
   p <- p + theme(axis.text=element_text(size=18), axis.text.x = element_text(angle = 45, hjust = 1))
   #p <- p + ylim(0,max(c(negs[,1],pos[,1]))*1.15)
@@ -373,9 +378,9 @@ checkOLwithMappability <- function(negDir,subsample=10L){
 #' 
 #' @return (GRanges) union of S100+ C2T and S100- G2A
 getBismapMappable <- function(){
-    mFile <- "/.mounts/labs/pailab/src/ucsc-goldenpath/hg38/k100.C2T-Converted.bb"
+    mFile <- "/home/rstudio/isilon/src/ucsc-goldenpath/hg38/k100.C2T-Converted.bb"
     gr <- import(mFile)
-    mFile2 <- "/.mounts/labs/pailab/src/ucsc-goldenpath/hg38/k100.G2A-Converted.bb"
+    mFile2 <- "/home/rstudio/isilon/src/ucsc-goldenpath/hg38/k100.G2A-Converted.bb"
     gr2 <- import(mFile2)
  
     gr <- IRanges::union(gr,gr2)

@@ -68,6 +68,8 @@ ggsave(sprintf("%s/hyper_top_hits.pdf", outDir), width = 8, height = 6)
 # combine hyper and hypo into one plot. Colour the hypo bars with #7B3294 and hyper bars with #008837
 combined <- rbind(hypoTop, hyperTop)
 combined$Type <- rep(c("Hypomethylated", "Hypermethylated"), each = 10)
+combined$motif_ID[which(combined$Type == "Hypermethylated" & combined$motif_ID == "VEZF1")] <- "VEZF1R"
+combined$motif_ID[which(combined$Type == "Hypermethylated" & combined$motif_ID == "MAZ")] <- "MAZR"
 
 ggplot(combined, aes(x = reorder(motif_ID, log10adjp), y = log10adjp, fill = Type)) +
   geom_bar(stat = "identity") +

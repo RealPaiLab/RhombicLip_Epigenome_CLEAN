@@ -95,7 +95,7 @@ tryCatch({
   write.table(dmrs, file=sprintf("%s/DMRs.csv",outDir),
               sep="\t",col=T,row=F,quote=F)
 
-  browser()
+  #browser()
   p2 <- ggplot(dmrs, aes(x = diff.Methy, y = status, fill = status)) +
     geom_violin(trim = FALSE) +
     geom_boxplot(width = 0.2) +
@@ -250,7 +250,7 @@ p <- ggplot(cur2, aes(x = ROI, y = value*100, fill = ROI)) +
 }
 
 cat("finished plotting sample DMRs with negative diff.Methy\n")
-browser()
+#browser()
 
 # SP you identified a discrepancy in the diff.Methy values between the DMRs and the pctM values. You were going to see if the match improves if you first compute numerator and denominator separately, then compute the diff.Methy values.
 

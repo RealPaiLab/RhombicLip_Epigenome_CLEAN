@@ -9,7 +9,7 @@ get_configs <- function(config_name = NA) {
   ## CONFIGS ##
   # Cytosine reports #
   CPG_REPORT_DIR <- c(
-    glue("/.mounts/labs/pailab/private/projects/FetalHindbrain/EMseq_FETHB3",
+    glue("/home/rstudio/isilon/private/projects/FetalHindbrain/EMseq_FETHB3",
          "/output/alignment/methyldackel/report/CpG_snpFiltered")
   )
   
@@ -17,28 +17,28 @@ get_configs <- function(config_name = NA) {
   #CPG_DMR_DATE <- "240522" # outdated
   CPG_DMR_DATE <- "240711"
   CPG_DMR_FILE <- glue(
-    "/.mounts/labs/pailab/private/projects/FetalHindbrain/EMseq_FETHB3",
+    "/home/rstudio/isilon/private/projects/FetalHindbrain/EMseq_FETHB3",
     "/output/downstream/EMseq_FETHB2-FETHB3/CpG/DMRs/CTsnv_excluded",
     "/withoutBatchCorrection/{CPG_DMR_DATE}/DMRs.csv"
   )
   
   # cCRE #
-  ENCODE_CRE_FILE <- glue("/.mounts/labs/pailab/private/projects",
+  ENCODE_CRE_FILE <- glue("/home/rstudio/isilon/private/projects",
                           "/FetalHindbrain/anno/GRCh38-cCREs.bed")
-  ALDINGER_CB_CRE_DIR <- glue("/.mounts/labs/pailab/private/xsun/output",
+  ALDINGER_CB_CRE_DIR <- glue("/home/rstudio/isilon/private/xsun/output",
                               "/ncMutMB/20240314/cre/Aldinger-FetalCB")
   
   # Gene annotation #
-  GENCODE_GENE_FILE <- glue("/.mounts/labs/pailab/private/projects/FetalHindbrain",
+  GENCODE_GENE_FILE <- glue("/home/rstudio/isilon/private/projects/FetalHindbrain",
                             "/anno/gencode.v44.basic.annotation.gtf")
   
   # Transposable elements #
-  REPEATMASKER_TE_FILE <- glue("/.mounts/labs/pailab/private/xsun/Database",
+  REPEATMASKER_TE_FILE <- glue("/home/rstudio/isilon/private/xsun/Database",
                                "/RepeatMasker/RepeatMasker_open406_Dec2013_Dfam20_hg38",
                                "/hg38.fa.out.gz")
   
   # metadata #
-  METADATA_FILE <- glue("/.mounts/labs/pailab/private/projects/FetalHindbrain",
+  METADATA_FILE <- glue("/home/rstudio/isilon/private/projects/FetalHindbrain",
                         "/EMseq_FETHB3/metadata/DNAm_RL_tumours_STables - Table S1.tsv")
   
   # rl meme db #
@@ -47,11 +47,11 @@ get_configs <- function(config_name = NA) {
   TF_DB <- "HOCOMOCOv12"
   
   # HOCOMOCOv12 
-  HOCOMOCO_V12 <- glue("/.mounts/labs/pailab/src/transcription-factors",
+  HOCOMOCO_V12 <- glue("/home/rstudio/isilon/src/transcription-factors",
                        "/HOCOMOCOv12/H12CORE_meme_format.meme")
   
   # Aldinger LCM RL-VZ vs SVZ RNA logFC
-  RL_DEG <- glue("/.mounts/labs/pailab/private/projects/FetalHindbrain",
+  RL_DEG <- glue("/home/rstudio/isilon/private/projects/FetalHindbrain",
                 "/AldingerMillen_LCM_RNAseq/output/VZ_SVZ_diffEx/231123",
                 "/edgeR_RLVZvsSVZ_231123.txt")
   
@@ -60,7 +60,7 @@ get_configs <- function(config_name = NA) {
                             "/Nasser-Neuronal-ABC_creTarget_hg38.bed")
   
   # Whalen MPRA results
-  WHALEN_MPRA_DIR <- glue("/.mounts/labs/pailab/src/neurodev-genomics/MPRA", 
+  WHALEN_MPRA_DIR <- glue("/home/rstudio/isilon/src/neurodev-genomics/MPRA", 
                           "/Whalen_2023/GSE110758_RAW")
   
   # RL active genes
@@ -68,10 +68,10 @@ get_configs <- function(config_name = NA) {
                           "/Hendrikse2022_RL_activeGenes")
   
   # JASPAR
-  JASPAR_DB <- "/.mounts/labs/pailab/src/ucsc-goldenpath/hg38/JASPAR2024.bb"
+  JASPAR_DB <- "/home/rstudio/isilon/src/ucsc-goldenpath/hg38/JASPAR2024.bb"
   
   # VISTA positive human hindbrain enhancer
-  VISTA_HB <- glue("/.mounts/labs/pailab/src/neurodev-genomics",
+  VISTA_HB <- glue("/home/rstudio/isilon/src/neurodev-genomics",
                    "/TransgenicMouseAssay/VISTA_Enhancer_Browser",
                    "/hindbrain_positive_enhancers_hg19.vista")
   

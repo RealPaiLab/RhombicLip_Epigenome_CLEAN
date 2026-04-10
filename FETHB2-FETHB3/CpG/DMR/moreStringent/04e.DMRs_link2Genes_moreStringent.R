@@ -1,17 +1,16 @@
 # filters DMRs for those overlapping H3K27ac peaks and links to genes using neuro ABC
 
-source("../../utils_PaiLab.R")
+source("../../../utils_PaiLab.R")
 require(GenomicRanges)
 library(UpSetR)
 library(ggplot2)
 
-CPG_DMR_FILE <- "/home/rstudio/isilon/private/projects/FetalHindbrain/EMseq_FETHB3/output/downstream/EMseq_FETHB2-FETHB3/CpG/DMRs/CTsnv_excluded/withoutBatchCorrection/240711/DMRs.csv"
+CPG_DMR_FILE <- "/home/rstudio/isilon/private/projects/FetalHindbrain/EMseq_FETHB3/output/downstream/EMseq_FETHB2-FETHB3/CpG/DMRs/CTsnv_excluded/withoutBatchCorrection/240711/moreStringent_251210/DMRs_moreStringent.csv"
 abcFile <- "/home/rstudio/isilon/private/projects/FetalHindbrain/anno/Nasser-Neuronal-ABC_creTarget_hg38.bed"
 
 mannensGeneLink <- "/home/rstudio/isilon/src/neurodev-genomics/multiome/Mannens_2024/downloaded_from_authors/Gene_links.bedpe"
 
-predictedTFBS1 <- "/home/rstudio/isilon/private/projects/FetalHindbrain/EMseq_FETHB3/output/downstream/EMseq_FETHB2-FETHB3/CpG/DMRs/CTsnv_excluded/withoutBatchCorrection/240711/SVZ_diff_hyper_AME_activeInRL_HOCOMOCOv12_240712/sequences.tsv"
-predictedTFBS2 <- "/home/rstudio/isilon/private/projects/FetalHindbrain/EMseq_FETHB3/output/downstream/EMseq_FETHB2-FETHB3/CpG/DMRs/CTsnv_excluded/withoutBatchCorrection/240711/SVZ_diff_hypo_AME_activeInRL_HOCOMOCOv12_240712/sequences.tsv"
+predictedTFBS <- sprintf("%s/all_dmr_AME_fullMEME_251210/sequences.tsv",dirname(CPG_DMR_FILE))
 
 harGR <- getHARs()
 #### write HARs to a bed file
@@ -25,7 +24,7 @@ harGR <- getHARs()
 
 outDir <- "/home/rstudio/isilon/private/projects/FetalHindbrain/EMseq_FETHB2-FETHB3/DMR_link2Genes_ABC"
 dt <- format(Sys.Date(), "%y%m%d")
-outDir <- sprintf("%s/%s", outDir, dt)
+outDir <- sprintf("%s/moreStringent_%s", outDir, dt)
 if (!dir.exists(outDir)) {
     dir.create(outDir, recursive = FALSE)
 }
@@ -36,7 +35,7 @@ tryCatch({
 cat("reading dmrs\n")
 dmrs <- read.delim(
     CPG_DMR_FILE, 
-    header = TRUE, sep="\t",
+    header = TRUE, sep=",",
     stringsAsFactors = FALSE
 )
 
@@ -76,7 +75,7 @@ cat(sprintf("Number of unique genes linked to DMRs: %d\n", length(unique(both$V4
 colnames(both)[which(colnames(both) == "V4")] <- "ABC_gene"
 
 uqGenes <- unique(both$ABC_gene)
-neurodev_genes <- get_neurodevGenes()
+neurodev_genes <- c(get_neurodevGenes(),"NEUROD1","NEUROD2")
   both$IsNeurodev <- both$ABC_gene %in% neurodev_genes
   
 cat("* Getting Group 3 & 4 MB associated genes\n")
@@ -200,7 +199,6 @@ write.table(
 olSV <- rowSums(both3[, grep("Overlaps_N2012|Overlaps_N2017", colnames(both3))]
 , na.rm = TRUE) > 0
 nm <- unique(both3$name[olSV])
-has_SV <- unique(both3$name[which(olSV)])
 
 
 cat("Final set of statistics\n")
@@ -220,26 +218,15 @@ cat(sprintf("Total unique neurodev genes: %i\n",
 cat(sprintf("Total unique G34 MB genes: %i\n", 
     length(unique(both3$ABC_gene[both3$ABC_IsG34gene]))))
 cat(sprintf("Total unique DMRs overlapping Northcott 2012 or 2017 SV: %d\n", 
-    length(has_SV)))
-
-write.table(
-    both3, 
-    file = sprintf("%s/DMR_AnnotatedAll_WithCNAs_%s.tsv", outDir, dt), 
-    sep = "\t", 
-    row.names = FALSE, 
-    quote = FALSE
-)
+    length(nm)))
 
 # write SIF file.
 x <- both3[,-c(2:10)]
-
+x$olSV <- olSV
 
 nm <- x$name[which(x$ABC_IsNeurodev | x$ABC_IsG34gene)]
 x <- x[which(x$name %in% nm),]
 x <- x[!duplicated(x),]
-tmp <- rep(FALSE, nrow(x))
-tmp[which(x$name %in% has_SV)] <- TRUE
-x$olSV <- tmp
 
 cat("writing gene attributes\n")
 geneAttrs <- x
@@ -287,9 +274,7 @@ for (i in unique(sifOut[,2])){
 }
 
 cat("Now create links from genes to enhancers\n")
-tfbs1 <- read.delim(predictedTFBS1, header=TRUE, stringsAsFactors = FALSE)
-tfbs2 <- read.delim(predictedTFBS2, header=TRUE, stringsAsFactors = FALSE)
-tfbs <- rbind(tfbs1, tfbs2)
+tfbs <- read.delim(predictedTFBS, header=TRUE, stringsAsFactors = FALSE)
 tfbs <- subset(tfbs, class %in% "tp")[,c(2,4)]
 cat(sprintf("Read %i predicted TFBS\n", nrow(tfbs)))
 tfbs <- tfbs[!duplicated(tfbs),]
@@ -300,6 +285,11 @@ tfbs[,1] <- substr(tfbs[,1], 1, regexpr("\\.", tfbs[,1])-1)
 cat(sprintf("After removing sub-motif info, %i unique TF motifs\n", length(unique(tfbs$motif_ID))))
 tfbs <- tfbs[!duplicated(tfbs),]
 cat(sprintf("After removing duplicate motif IDs, %i predicted TFBS\n", nrow(tfbs)))
+
+# synonym !
+tfbs[which(tfbs[,1]=="NDF1"),1] <- "NEUROD1"
+tfbs[which(tfbs[,1]=="NDF2"),1] <- "NEUROD2"
+
 tfbs[,2] <- sub(":", "-", tfbs[,2])
 #split column 2 by "-"
 tfbs_split <- do.call(rbind, strsplit(tfbs[,2], "-"))
@@ -336,7 +326,7 @@ TF2gene <- subset(TF2gene,
 cat(sprintf("After filtering for neurodev and G34 genes, %i links remain\n", nrow(TF2gene)))
 write.table(
     TF2gene, 
-    file = sprintf("%s/TFmotif_2_ABCgene_MotifIDIsNeurovOrG34_%s.tsv", outDir, dt), 
+    file = sprintf("%s/TFmotif_2_ABCgene_srcIsNeurovOrG34_%s.tsv", outDir, dt), 
     sep = "\t", 
     row.names = FALSE, 
     quote = FALSE
@@ -347,12 +337,19 @@ TF2gene <- subset(TF2gene,
 cat(sprintf("After filtering for ABCgene being neurodev or G34 genes, %i links remain\n", nrow(TF2gene)))
 write.table(
     TF2gene, 
-    file = sprintf("%s/TFmotif_2_ABCgene_srcTgt_IsNeurovOrG34_%s.tsv", outDir, dt), 
+    file = sprintf("%s/TFmotif_2_ABCgene_srcIsNeurovOrG34_%s.tsv", outDir, dt), 
     sep = "\t", 
     row.names = FALSE, 
     quote = FALSE
 )
 
+write.table(
+    TF2gene, 
+    file = sprintf("%s/TFmotif_2_ABCgene_srcTgt_IsNeurovOrG34_%s.tsv", outDir, dt), 
+    sep = "\t", 
+    row.names = FALSE, 
+    quote = FALSE
+)
 
 
 cat("create clean table for upset plot\n")
@@ -372,9 +369,8 @@ forup[which(forup$name %in% both3$name[which(both3$ABC_IsNeurodev)]),
     "ABC_IsNeurodev"] <- TRUE
 forup[which(forup$name %in% both3$name[which(both3$ABC_IsG34gene)]), 
     "ABC_IsG34gene"] <- TRUE
-forup[which(forup$name %in% has_SV), 
+forup[which(forup$name %in% x$name[which(x$olSV)]), 
     "olSV"] <- TRUE
-
 
 for (k in 2:6) {
     forup[, k] <- as.integer(forup[, k])
@@ -385,9 +381,8 @@ cat("create upset plot\n")
 pdf(sprintf("%s/upset_plot.pdf", outDir), width = 16, height = 8)
 upset(
     forup, 
-    sets = rev(c("Overlaps_FetalCB_Enhancer", "ABC_gene", 
-             "ABC_IsNeurodev", "ABC_IsG34gene", "olSV")),
-    keep.order = TRUE,         
+    sets = c("Overlaps_FetalCB_Enhancer", "ABC_gene", 
+             "ABC_IsNeurodev", "ABC_IsG34gene", "olSV"),
     order.by = "freq",
     mainbar.y.label = "Number of unique\noverlapping DMRs",
     sets.x.label = "Number of annotations",
