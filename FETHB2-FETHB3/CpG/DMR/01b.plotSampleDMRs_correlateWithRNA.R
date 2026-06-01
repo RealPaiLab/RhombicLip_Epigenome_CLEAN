@@ -195,6 +195,11 @@ p <- p + geom_text_repel(
   geom_hline(yintercept = 0, linetype="dashed", color = "red") +
   geom_vline(xintercept = 0, linetype="dashed", color = "red") 
 
+colnames(comb)[2:3] <- paste0("DMR_", colnames(comb)[2:3])
+colnames(comb)[4:6] <- paste("RL_DEG_", colnames(comb)[4:6], sep="")
+write.table(comb,file=sprintf("%s/DMR_DEG_minCvg%i_up%i_down%i.txt", outDir, minCvg, upstream, downstream), 
+  sep="\t", row.names = FALSE, col.names = TRUE, quote = FALSE)
+browser()
 
 cr <- cor.test(comb$logFC, comb$diff.Methy, method="pearson")
 cat(sprintf("DMR vs DEG: Correlation between promoter methylation change and gene expression change:\n"))

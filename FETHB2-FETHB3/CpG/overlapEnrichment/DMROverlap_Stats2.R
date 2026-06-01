@@ -11,6 +11,8 @@ cpg_dmr_date <- get_configs("CPG_DMR_DATE")
 projectRoot <- "/home/rstudio/isilon/private/projects/FetalHindbrain/EMseq_FETHB3/output/downstream/EMseq_FETHB2-FETHB3/CpG/DMRs/CTsnv_excluded/withoutBatchCorrection/"
 projectRoot <- sprintf("%s/%s", projectRoot, cpg_dmr_date)
 
+dmrFile <- "/home/rstudio/isilon/private/projects/FetalHindbrain/EMseq_FETHB3/output/downstream/EMseq_FETHB2-FETHB3/CpG/DMRs/CTsnv_excluded/withoutBatchCorrection/240711/DMRs.csv"
+
 supEnhFile <- "/home/rstudio/isilon/private/projects/FetalHindbrain/Aldinger_FetalCBL_ChipSeq/CBL_Chipseq/Aldinger_FetalCBChipseq_superEnhancers.txt"
 abcFile <- "/home/rstudio/isilon/private/projects/FetalHindbrain/anno/Nasser-Neuronal-ABC_creTarget_hg38.bed"
 
@@ -20,10 +22,11 @@ if (!file.exists(outDir)) dir.create(outDir,recursive=FALSE)
 outDir <- sprintf("%s/%s",outDir,dt)
 if (!file.exists(outDir)) dir.create(outDir,recursive=FALSE)
 
-negDir <- sprintf("%s/negs",outDir)
+negDir <- sprintf("%s/DMRoverlap2/260601/negs",projectRoot)
+matchedDir <- NULL #"/home/rstudio/isilon/private/projects/FetalHindbrain/EMseq_FETHB2-FETHB3/DMR_CpGcompare/260601"
 logFile <- sprintf("%s/DMROverlap_Stats.log", outDir)
 
-numPerm <- 1000L
+numPerm <- 50L #1000L
 numCores <- 10L
 source("getGRanges_OLenrichment.R")
 
@@ -54,14 +57,32 @@ sink(logFile, append=FALSE, split=TRUE)
 
 tryCatch({
 cat(sprintf("Reading DMRs from %s\n", cpg_dmr_date))
-dmr <- getDMRs(projectRoot)
-cat(sprintf("Read %i DMRs\n", length(dmr)))
+dmrs <- read.delim(dmrFile, header=T, stringsAsFactors = FALSE)
+dmrs$dmr_name <- sprintf("%s-%s-%s", dmrs$chr, dmrs$start, dmrs$end)
+cat(sprintf("Read %i DMRs\n", nrow(dmrs)))
 
-dmr <- regioneR::filterChromosomes(dmr, organism="hg", chr.type="canonical")
+dmr_df <- dmrs
+dmr <- GRanges(seqnames = dmrs$chr,
+                 ranges = IRanges(start=dmrs$start, end=dmrs$end),
+                 dmr_name = dmrs$dmr_name)
+
+#dmr <- regioneR::filterChromosomes(dmr, organism="hg", chr.type="canonical")
 cat(sprintf("Filter standard chrom: DMRs left=%i\n", length(dmr)))
 
 hg38 <- BSgenome.Hsapiens.UCSC.hg38.masked
 hg38 <- keepStandardChroms(hg38) # remove alternate chroms 
+
+cat("HARs\n")
+cat("----------------\n")
+hars <- getHARs()
+ol <- findOverlaps(dmr, hars)
+dmr_ol <- dmr_df[which(dmr_df$dmr_name %in% dmr$dmr_name[queryHits(ol)]),]
+cat(sprintf("Num DMRs overlapping HARs: %i\n", length(unique(queryHits(ol)))))
+cat(sprintf("# hypoDMRs = %i, # hyperDMRs = %i\n", sum(dmr_ol$diff.Methy<0), sum(dmr_ol$diff.Methy>0)))
+ol_sv <- getGRanges_OLenrichment(
+        pos=dmr,tgtGR=hars, numPerm=numPerm, negDir=negDir, idxDir=matchedDir,
+        rngSeed=12345,genome=hg38, outDir=outDir,
+        tgtName="HARs", verbose=TRUE)
 
 cat("Super-enhancers\n")
 cat("----------------\n")
@@ -71,8 +92,16 @@ cat(sprintf("Read %i super-enhancers\n", nrow(se)))
 se_GR <- GRanges(seqnames = se$V1,
                  ranges = IRanges(start=se$V2, end=se$V3))       
 
+ol <- findOverlaps(dmr, se_GR)
+dmr_ol <- dmr_df[which(dmr_df$dmr_name %in% dmr$dmr_name[queryHits(ol)]),]
+cat(sprintf("Num DMRs overlapping super-enhancers: %i\n", length(unique(queryHits(ol)))))
+cat(sprintf("# hypoDMRs = %i, # hyperDMRs = %i\n", sum(dmr_ol$diff.Methy<0), sum(dmr_ol$diff.Methy>0)))
+superenh_OL <- cbind(as.data.frame(dmr[queryHits(ol)]), as.data.frame(se_GR[subjectHits(ol)]))
+superenh_OL <- superenh_OL[!duplicated(superenh_OL),]
+write.table(superenh_OL, file=sprintf("%s/DMR_superEnhancer_overlap.txt", outDir), sep="\t", quote=F, row.names=F)
+
 ol_sv <- getGRanges_OLenrichment(
-        pos=dmr,tgtGR=se_GR, numPerm=numPerm, negDir=negDir,
+        pos=dmr,tgtGR=se_GR, numPerm=numPerm, negDir=negDir, idxDir=matchedDir,
         rngSeed=12345,genome=hg38, outDir=outDir,
         tgtName="SuperEnhancers", verbose=TRUE)
 
@@ -96,7 +125,7 @@ g34_genes <- get_g34genes()
 olreal <- countABC_geneStats(dmr, abcGR, neurodev_genes, g34_genes)
 negs <- dir(path=negDir, pattern="neg")
 negs <- negs[grep("(?<!unfiltered)\\.bed", negs, perl = TRUE)] # to use only filtered ones
-negs <- sprintf("%s/%s",negDir,negs)[1:254]
+negs <- sprintf("%s/%s",negDir,negs)
 cat(sprintf("Found %i neg sets\n",length(negs)))
 
 negStats <- data.frame(numNeurodevOL=integer(length(negs)), 

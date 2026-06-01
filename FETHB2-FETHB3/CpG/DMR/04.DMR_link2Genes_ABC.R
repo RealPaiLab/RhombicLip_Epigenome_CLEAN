@@ -353,8 +353,6 @@ write.table(
     quote = FALSE
 )
 
-
-
 cat("create clean table for upset plot\n")
 forup <- data.frame(
     name = dmrs$name,

@@ -743,4 +743,15 @@ getNorthcott2017_AmpsDels <- function() {
   return(res)
 }
 
+#' return BSgenome object with only autosomes, sex chromosomes, and mitochondrial.
+#' Remove all other alternate chromosomes
+#' @param genome (BSgenome) BSgenome object to alter
+#' @return BSgenome object
+keepStandardChroms <- function(genome){
+    seqnames <- paste0("chr",c(1:22,"X","Y","M"))
+    stopifnot(all(seqnames %in% seqnames(genome)))
+    genome@user_seqnames <- setNames(seqnames, seqnames)
+    genome@seqinfo <- genome@seqinfo[seqnames]
+    genome
+}
 

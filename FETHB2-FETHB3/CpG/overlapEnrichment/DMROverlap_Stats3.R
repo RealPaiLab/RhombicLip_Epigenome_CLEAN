@@ -20,7 +20,7 @@ geneFile <- "/home/rstudio/isilon/private/projects/FetalHindbrain/anno/gencode.v
 ###rnaFile <- "/home/rstudio/isilon/private/projects/FetalHindbrain/Sarropoulos2026/260402/Sarropoulos_RNA_Seurat.rds"
 
 ciceroFile <- "/home/rstudio/isilon/private/projects/FetalHindbrain/Sarropoulos2026/260406_CiceroRLonly/ciceroRLOnly_passCutoff.Rdata"
-ciceroEPFile <- "/home/rstudio/isilon/private/projects/FetalHindbrain/Sarropoulos2026/260409_DMR_overlap_EPs/Sarropoulos_RL_Cicero_inferredEP_upregGenes_oneTSS.txt"
+ciceroEPFile <- "/home/rstudio/isilon/private/projects/FetalHindbrain/Sarropoulos2026/260410_DMR_overlap_EPs/Sarropoulos_RL_Cicero_inferredEP_upregGenes_oneTSS.txt"
 
 numPerm <- 1000L
 numCores <- 8L
@@ -193,9 +193,9 @@ if (FALSE) {
 cat("----------------------------\n")
 cat("METHOD 2: Cicero co-accessibility peaks in rhombic lip\n")
 cat("----------------------------\n")
-###load(ciceroFile)
-###conns <- cicero.good
-###
+load(ciceroFile)
+conns <- cicero.good
+
 ###cat("\nCicero Peak 1\n")
 ###p1 <- do.call("rbind",strsplit(conns$Peak1, split="-"))
 ###p1 <- p1[!duplicated(p1),]
@@ -227,7 +227,6 @@ cat("----------------------------\n")
 cat("now reading the inferred EP pairs linked to")
 ciceroEP <- read.delim(ciceroEPFile, header=TRUE)[,1:3]
 ciceroEP <- ciceroEP[!duplicated(ciceroEP),]
-cat(sprintf("Cicero EP: %i unique peaks mapping to %i genes\n", nrow(ciceroEP)))
 gr3 <- GRanges(ciceroEP[,1], IRanges(ciceroEP[,2], ciceroEP[,3]))
 ol_cep<- getGRanges_OLenrichment(
         pos=dmr,tgtGR=gr3, numPerm=numPerm, negDir=negDir,
