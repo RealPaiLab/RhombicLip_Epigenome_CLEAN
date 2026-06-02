@@ -12,18 +12,23 @@ projectRoot <- "/home/rstudio/isilon/private/projects/FetalHindbrain/EMseq_FETHB
 projectRoot <- sprintf("%s/%s", projectRoot, cpg_dmr_date)
 
 dmrFile <- "/home/rstudio/isilon/private/projects/FetalHindbrain/EMseq_FETHB3/output/downstream/EMseq_FETHB2-FETHB3/CpG/DMRs/CTsnv_excluded/withoutBatchCorrection/240711/DMRs.csv"
-
 supEnhFile <- "/home/rstudio/isilon/private/projects/FetalHindbrain/Aldinger_FetalCBL_ChipSeq/CBL_Chipseq/Aldinger_FetalCBChipseq_superEnhancers.txt"
 abcFile <- "/home/rstudio/isilon/private/projects/FetalHindbrain/anno/Nasser-Neuronal-ABC_creTarget_hg38.bed"
+matchedDir <- "/home/rstudio/isilon/private/projects/FetalHindbrain/EMseq_FETHB2-FETHB3/DMR_CpGcompare/260602"
 
 dt <- format(Sys.Date(),"%y%m%d")
-outDir <-sprintf("%s/DMRoverlap2",projectRoot)
+if (!is.null(matchedDir)) {
+    outDir <- sprintf("%s/DMRoverlap2_matched", projectRoot)
+} else { 
+    outDir <- sprintf("%s/DMRoverlap2",projectRoot)
+}
+
+
 if (!file.exists(outDir)) dir.create(outDir,recursive=FALSE)
 outDir <- sprintf("%s/%s",outDir,dt)
 if (!file.exists(outDir)) dir.create(outDir,recursive=FALSE)
 
 negDir <- sprintf("%s/DMRoverlap2/260601/negs",projectRoot)
-matchedDir <- NULL #"/home/rstudio/isilon/private/projects/FetalHindbrain/EMseq_FETHB2-FETHB3/DMR_CpGcompare/260601"
 logFile <- sprintf("%s/DMROverlap_Stats.log", outDir)
 
 numPerm <- 50L #1000L
@@ -56,6 +61,8 @@ logFile <- sprintf("%s/DMRoverlap_Stats2.log",outDir)
 sink(logFile, append=FALSE, split=TRUE)
 
 tryCatch({
+
+cat(" *** Matched negative indices provided\n *** ")
 cat(sprintf("Reading DMRs from %s\n", cpg_dmr_date))
 dmrs <- read.delim(dmrFile, header=T, stringsAsFactors = FALSE)
 dmrs$dmr_name <- sprintf("%s-%s-%s", dmrs$chr, dmrs$start, dmrs$end)

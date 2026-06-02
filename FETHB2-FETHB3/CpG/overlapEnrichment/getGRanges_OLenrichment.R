@@ -111,7 +111,7 @@ plotGRanges_OLenrichment <- function(pos, tgtGR, tgtName, negDir, idxDir, numCor
     if (verbose) cat("Matching null seqs to positive seqs by CpG deciles...\n")
 
   }
-  nullol <- foreach (k=seq(1,length(negs),10),.packages=c("rtracklayer")) %do% {  
+  nullol <- foreach (k=seq(1,length(negs),10),.packages=c("rtracklayer")) %dopar% {  
     cur <- c()
     maxK <- min(k+9, length(negs))
     for (m in k:maxK){
@@ -121,7 +121,6 @@ plotGRanges_OLenrichment <- function(pos, tgtGR, tgtName, negDir, idxDir, numCor
         idxFile <- sprintf("%s/matched_indices_neg%d.txt", idxDir, m)
         if (file.exists(idxFile)) {
           match_idx <- read.table(idxFile, header=FALSE)[,1]  
-          browser()
           neg <- neg[match_idx]
         } else {
           cat(sprintf("Warning: idx file %s not found. Using all neg seqs.\n", idxFile))
